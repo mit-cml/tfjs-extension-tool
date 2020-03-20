@@ -1,0 +1,2 @@
+include appinventor/tfjs/template/TensorflowTemplate.java
+include appinventor/tfjs/template/assets/*
