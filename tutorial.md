@@ -63,11 +63,13 @@ Open [App Inventor](http://ai2.appinventor.mit.edu) and start a new project. Loa
 
 Add the following blocks to your project:
 
-![event handler LookExtension1.](images/model-ready.png)
+![event handler when Look Extension 1 dot Model Ready do set Label 1 dot Text to string Ready](images/model-ready.png)
 
-![event handler LookExtension1.](images/got-result.png)
+![event handler when Look Extension 1 dot Model Ready with parameter result do set Label 1 dot Text to get variable result](images/got-result.png)
 
-![event handler LookExtension1.](images/error.png)
+![event handler when Look Extension 1 dot Error with parameters error code, error message do set Label 1 dot Text to get variable error message](images/error.png)
+
+**NB:** You can save the images above to your computer and then drag them into App Inventor's blocks interface to add them.
 
 ### Connect the Companion
 
