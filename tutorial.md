@@ -14,7 +14,11 @@
 pip install appinventor-tfjs
 ```
 
-## Create the LookExtension Template
+## Create the LookExtension
+
+With the prerequsites installed, let's make our first extension.
+
+### Generate Extension Skeleton from Template
 
 ```
 python -m appinventor.tfjs mobilenet com.example.mobilenet.LookExtension
@@ -22,7 +26,7 @@ python -m appinventor.tfjs mobilenet com.example.mobilenet.LookExtension
 
 This will create a new directory called LookExtension in your current directory. It will create a template LookExtension.java file for your App Inventor extension as well as retrieve all of the model data needed for MobileNet.
 
-## Edit app.js
+### Edit app.js
 
 In the `loadModel` function, locate the `mobilenet.load(...)` call and replace it with the following code:
 
@@ -36,12 +40,13 @@ In the `classifyFrame` function, locate the the `net.evaluate` call to:
 const result = await net.classify(video, 5);
 ```
 
+### Compile the Extension
 
-## Compile the Extension
+In a shell, run the `ant` command from within the LookExtension directory. This will produce an App Inventor extension `com.example.mobilenet.aix` in a directory called `out`.
 
-In a shell, run the `ant` command from within the LookExtension directory. This will produce an App Inventor extension com.example.mobilenet.aix in a directory called `out`.
+## Create a Test App
 
-## Build an App
+Let's try out our new extension.
 
 ### Load LookExtension
 
