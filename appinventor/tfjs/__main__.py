@@ -55,6 +55,7 @@ def retrieve_model(model_package):
     with open('retrieve.js', 'w') as f:
         f.write(fetch_template % model_package)
     print('Fetching model assets...')
+    subprocess.check_output(['npm', 'i', '@tensorflow/tfjs-core'], encoding='utf-8', universal_newlines=True, stderr=None)
     output = subprocess.check_output(['node', 'retrieve.js'], encoding='utf-8', universal_newlines=True, stderr=None)
     for line in io.StringIO(output):
         if line.startswith('https://'):
