@@ -22,21 +22,49 @@ This will create a new directory called LookExtension in your current directory.
 
 ## Edit app.js
 
-Locate the `mobilenet.load(...)` call and replace it with the following data:
+In the `loadModel` function, locate the `mobilenet.load(...)` call and replace it with the following data:
 
 ```
 return mobilenet.load({version: 2, alpha: 0.5});
 ```
 
-In the classifyFrame function, change the `net.evaluate` call to `net.classify`.
+In the `classifyFrame` function, locate the the `net.evaluate` call to:
+
+```
+const result = await net.classify(video, 5);
+```
+
 
 ## Compile the Extension
 
 In a shell, run the `ant` command from within the LookExtension directory. This will produce an App Inventor extension com.example.mobilenet.aix in a directory called `out`.
 
-## Load LookExtension
+## Build an App
+
+### Load LookExtension
 
 Open [App Inventor](http://ai2.appinventor.mit.edu) and start a new project. Load your .aix file produced in the last step.
+
+### Designer
+
+1. Add a Label to the Screen
+2. Add a WebViewer to the Screen
+3. Add a LookExtension to the Screen
+4. Set the WebViewer property of LookExtension1 to WebViewer1
+
+### Blocks
+
+Add the following blocks to your project:
+
+![event handler LookExtension1.](images/model-ready.png)
+
+![event handler LookExtension1.](images/got-result.png)
+
+![event handler LookExtension1.](images/error.png)
+
+### Connect the Companion
+
+On your mobile device, start the MIT AI2 Companion. In App Inventor, click Connect then AI Companion. Scan the QR code with the companion app.
 
 ## Appendix A: Annotations
 
