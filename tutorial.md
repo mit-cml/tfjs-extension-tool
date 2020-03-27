@@ -24,7 +24,7 @@ This will create a new directory called LookExtension in your current directory.
 
 ## Edit app.js
 
-In the `loadModel` function, locate the `mobilenet.load(...)` call and replace it with the following data:
+In the `loadModel` function, locate the `mobilenet.load(...)` call and replace it with the following code:
 
 ```
 return mobilenet.load({version: 2, alpha: 0.5});
