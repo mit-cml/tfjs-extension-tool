@@ -5,6 +5,8 @@
 * Java 8
 * Ant 1.10
 * Python 3
+* Node and npm
+* git
 
 ## Install App Inventor TFJS generator
 

@@ -4,6 +4,15 @@ The aim of this tool is to make it easier to generate the scaffolding needed to 
 
 ## Quickstart
 
+Install dependencies:
+
+* java 8
+* ant 1.10
+* python 3
+* node
+* npm
+* git
+
 Install the App Inventor TFJS extension generator using pip:
 
 ```
