@@ -34,7 +34,7 @@ In the `loadModel` function, locate the `mobilenet.load(...)` call and replace i
 return mobilenet.load({version: 2, alpha: 0.5});
 ```
 
-In the `classifyFrame` function, locate the the `net.evaluate` call to:
+In the `classifyFrame` function, locate the `net.evaluate` call and change that line to be:
 
 ```
 const result = await net.classify(video, 5);
