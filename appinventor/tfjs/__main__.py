@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import urllib.request
 
@@ -30,10 +31,13 @@ async function go() {
 
 go();
 """
+verbose = False
 
 
 def create_project(project_name):
-    subprocess.check_output(['git', 'clone', 'https://github.com/mit-cml/extension-template.git', project_name])
+    global verbose
+    subprocess.check_output(['git', 'clone', 'https://github.com/mit-cml/extension-template.git', project_name],
+                            stderr=sys.stderr if verbose else subprocess.DEVNULL)
 
 
 def install(package):
@@ -48,22 +52,27 @@ def install(package):
 
 
 def retrieve_model(model_package):
+    global verbose
     try:
         os.mkdir('out')
     except FileExistsError:
         pass  # already exists!
     with open('retrieve.js', 'w') as f:
         f.write(fetch_template % model_package)
-    print('Fetching model assets...')
-    subprocess.check_output(['npm', 'i', '@tensorflow/tfjs-core'], encoding='utf-8', universal_newlines=True, stderr=None)
-    output = subprocess.check_output(['node', 'retrieve.js'], encoding='utf-8', universal_newlines=True, stderr=None)
+    if verbose:
+        print('Fetching model assets...')
+    subprocess.check_output(['npm', 'i', '@tensorflow/tfjs-core'], encoding='utf-8', universal_newlines=True,
+                            stderr=sys.stderr if verbose else subprocess.DEVNULL)
+    output = subprocess.check_output(['node', 'retrieve.js'], encoding='utf-8', universal_newlines=True,
+                                     stderr=sys.stderr if verbose else subprocess.DEVNULL)
     for line in io.StringIO(output):
         if line.startswith('https://'):
             filename = line.strip().split('/')
             filename = filename[-1]
             if '?' in filename:
                 filename = filename.split('?')[0]
-            print('Retrieving ' + line.strip())
+            if verbose:
+                print('Retrieving ' + line.strip())
             with urllib.request.urlopen(line.strip()) as response:
                 with open(os.path.join('out', filename), 'wb') as out:
                     out.write(response.read())
@@ -159,6 +168,7 @@ def populate_extension(fqcn, model, dependencies):
 
 
 def main():
+    global verbose
     # appinventor_dir = os.environ['APPINVENTOR_DIR'] if 'APPINVENTOR_DIR' in os.environ else os.getcwd()
     # if not appinventor_dir.endswith('appinventor'):
     #     print('This module should be run from within the appinventor directory in appinventor-sources.',
@@ -166,28 +176,64 @@ def main():
     #     sys.exit(1)
     parser = argparse.ArgumentParser(prog='appinventor.tfjs',
                                      description='Create a TensorFlow.js-based extension for MIT App Inventor.')
+    parser.add_argument('--no-temp', dest='no_temp', default=False, action='store_const', const=True)
+    parser.add_argument('--overwrite', '-f', dest='overwrite', action='store_const', const=True, default=False)
+    parser.add_argument('--verbose', '-v', action='store_const', const=True, default=False)
+    parser.add_argument('--quiet', '-q', action='store_const', const=True, default=False)
     parser.add_argument('--scope', default='@tensorflow-models')
     parser.add_argument('model_name')
     parser.add_argument('class_name')
     args = parser.parse_args()
+    verbose = args.verbose
+    if args.quiet and args.verbose:
+        args.quiet = False
+    if args.verbose:
+        print(f'Python version: {sys.version}')
+        print(f'npm version: {subprocess.check_output(["npm", "--version"], encoding="utf-8").strip()}')
     scope, model_name, fqcn = args.scope, args.model_name, args.class_name
     package_name, class_name = get_package_and_class(fqcn)
+    if os.path.exists(class_name):
+        shutil.rmtree(class_name)
+    if not args.quiet:
+        print('Cloning repo from GitHub...')
     create_project(class_name)
     os.chdir(class_name)
-    with tempfile.TemporaryDirectory(dir=os.getcwd()) as work_dir:
+    basedir = os.getcwd()
+
+    def run(work_dir):
+        if not os.path.exists(work_dir):
+            os.makedirs(work_dir, exist_ok=True)
         os.chdir(work_dir)
+        if args.verbose:
+            print(f'work_dir = {work_dir}')
         model_package = f'{scope}/{model_name}'
         dependencies = []
+        if not args.quiet:
+            print('Installing model from npm...')
         for peer in install(model_package):
-            print(f'Installing peer package {peer}')
+            if not args.quiet:
+                print(f'Installing peer package {peer}...')
             install(peer)
             dependencies.append(peer)
         dependencies.append(model_package)
+        if not args.quiet:
+            print('Retrieving model structure and weights...')
         retrieve_model(model_package)
+        print('Creating extension skeleton...')
         populate_extension(args.class_name, model_name, dependencies)
-        os.chdir('..')
+
+    if args.no_temp:
+        run(os.path.join(os.getcwd(), 'workdir'))
+    else:
+        with tempfile.TemporaryDirectory(dir=basedir) as d:
+            run(d)
+
+    os.chdir(basedir)
+    if not args.quiet:
+        print('Building extension...')
     subprocess.check_output(['ant'])
-    print('Finished.')
+    if not args.quiet:
+        print('Finished.')
 
 
 if __name__ == '__main__':
