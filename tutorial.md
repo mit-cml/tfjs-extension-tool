@@ -4,9 +4,85 @@
 
 * Java 8
 * Ant 1.10
-* Python 3
-* Node and npm
+* Python 3.6+
+* Node and npm 6.13+
 * git
+
+Use either the setting up section below to configure your environment. You can use the Python3 instructions if `python --version` returns 3.6 or greater. Otherwise, use the Homebrew version with pyenv to install Python 3.6+.
+
+### Setting up prerequisites with Homebrew on macOS
+
+1. Install dependencies with homebrew:
+
+    ```shell
+    brew install pyenv pyenv-virtualenv pyenv-virtualenvwrapper openssl readline zlib node
+    npm install -g npm
+    ```
+
+2. Add the following to your `.bash_profile`:
+
+   ```shell
+   eval "$(pyenv init -)"
+   eval "$(pyenv virtualenv-init -)"
+   ```
+
+3. Source `.bash_profile`:
+
+   ```shell
+   . ~/.bash_profile
+   ```
+
+4. Install Python with pyenv:
+
+   ```shell
+   pyenv install 3.7.5
+   ```
+
+5. Create a pyenv virtualenv:
+
+   ```shell
+   pyenv virtualenv 3.7.5 appinventor
+   ```
+
+6. Activate the virtualenv:
+
+   ```shell
+   pyenv activate appinventor
+   ```
+
+Proceed to [Install App Inventor TFJS generator](#install-app-inventor-tfjs-generator).
+
+### Setting up prerequisites with Python3
+
+Requires python 3.6 or later.
+
+1. Create a venv with python3:
+
+   ```shell
+   python3 -m venv venv
+   ```
+
+2. Activate the venv:
+
+   ```shell
+   . venv/bin/activate
+   ```
+
+3. Confirm python version (should be 3.6 or newer):
+
+   ```
+   $ python --version
+   3.7.7
+   ```
+
+4. Install node/npm with homebrew:
+
+   ```shell
+   brew install node
+   npm install -g npm
+   ```
+
+Proceed to [Install App Inventor TFJS generator](#install-app-inventor-tfjs-generator).
 
 ## Install App Inventor TFJS generator
 
