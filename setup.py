@@ -4,7 +4,7 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='appinventor-tfjs',
-      version='0.1.1',
+      version='0.1.2',
       description='Tool for generating App Inventor extension skeletons from Tensorflow.js models',
       long_description=long_description,
       long_description_content_type='text/markdown',
