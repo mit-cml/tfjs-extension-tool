@@ -31,6 +31,18 @@ async function go() {
 
 go();
 """
+PACKAGE_JSON = """{{
+  "name": "{}",
+  "version": "1.0.0",
+  "description": "",
+  "main": "retrieve.js",
+  "scripts": {{
+    "test": "echo \\"Error: no test specified\\" && exit 1"
+  }},
+  "author": "",
+  "license": "Apache"
+}}
+"""
 verbose = False
 
 
@@ -206,6 +218,8 @@ def main():
         os.chdir(work_dir)
         if args.verbose:
             print(f'work_dir = {work_dir}')
+        with open('package.json', 'w') as package:
+            package.write(PACKAGE_JSON.format(class_name.lower()))
         model_package = f'{scope}/{model_name}'
         dependencies = []
         if not args.quiet:
