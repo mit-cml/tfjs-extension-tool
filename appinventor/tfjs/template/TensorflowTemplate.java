@@ -98,9 +98,12 @@ public class TensorflowTemplate extends AndroidNonvisibleComponent
     webview.setWebViewClient(new WebViewClient() {
       @Override
       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-        final String url = request.getUrl().toString();
+        String url = request.getUrl().toString();
         Log.d(LOG_TAG, "shouldInterceptRequest called");
         if (url.startsWith(MODEL_URL)) {
+          if (url.indexOf("?") >= 0) {
+            url = url.substring(0, url.indexOf("?"));
+          }
           Log.d(LOG_TAG, "overriding " + url);
           InputStream is;
           try {
