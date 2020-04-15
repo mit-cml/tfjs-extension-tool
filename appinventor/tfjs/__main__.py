@@ -26,7 +26,7 @@ async function go() {
         return oldFetch(path);
     }
 
-    await model.load();
+    await model.load(%s);
 }
 
 go();
@@ -63,14 +63,14 @@ def install(package):
     return peers
 
 
-def retrieve_model(model_package):
+def retrieve_model(model_package, model_args):
     global verbose
     try:
         os.mkdir('out')
     except FileExistsError:
         pass  # already exists!
     with open('retrieve.js', 'w') as f:
-        f.write(fetch_template % model_package)
+        f.write(fetch_template % (model_package, model_args))
     if verbose:
         print('Fetching model assets...')
     subprocess.check_output(['npm', 'i', '@tensorflow/tfjs-core'], encoding='utf-8', universal_newlines=True,
@@ -98,7 +98,7 @@ def get_package_and_class(class_name):
     return '.'.join(parts[:-1]), parts[-1]
 
 
-def copy_assets(class_name, model_name, dependencies, package_dir):
+def copy_assets(class_name, model_name, model_args, dependencies, package_dir):
     src_asset_dir = os.path.join(TEMPLATE, 'assets')
     dst_asset_dir = os.path.join(package_dir, 'assets')
     os.makedirs(dst_asset_dir, exist_ok=True)
@@ -118,7 +118,9 @@ def copy_assets(class_name, model_name, dependencies, package_dir):
                 with open(os.path.join(dirname, file)) as src:
                     with open(os.path.join(dst_asset_dir, file), 'w') as dst:
                         for line in src:
-                            dst.write(line.replace('TensorflowTemplate', class_name).replace('$MODEL', model_name))
+                            dst.write(line.replace('TensorflowTemplate', class_name)
+                                      .replace('$MODEL_ARGS', model_args)
+                                      .replace('$MODEL', model_name))
             elif file == 'index.html':
                 with open(os.path.join(dirname, file)) as src:
                     with open(os.path.join(dst_asset_dir, file), 'w') as dst:
@@ -172,11 +174,11 @@ def create_versions_file(package_dir, dependencies):
             f.write(f'{dependency}={info["version"]}\n')
 
 
-def populate_extension(fqcn, model, model_url, dependencies):
+def populate_extension(fqcn, model, model_url, model_args, dependencies):
     package, class_name = get_package_and_class(fqcn)
     package_dir = os.path.join(*(['..', 'src'] + package.split('.')))
     os.makedirs(os.path.join(package_dir, 'assets'), exist_ok=True)
-    files = copy_assets(class_name, model, dependencies, package_dir)
+    files = copy_assets(class_name, model, model_args, dependencies, package_dir)
     files += copy_model_assets(package_dir)
     copy_extension(package_dir, package, class_name, model, model_url, files)
     create_versions_file(package_dir, dependencies)
@@ -196,6 +198,7 @@ def main():
     parser.add_argument('--verbose', '-v', action='store_const', const=True, default=False)
     parser.add_argument('--quiet', '-q', action='store_const', const=True, default=False)
     parser.add_argument('--scope', default='@tensorflow-models')
+    parser.add_argument('--model-args', '-A', default='', type=str, dest='model_args')
     parser.add_argument('model_name')
     parser.add_argument('class_name')
     args = parser.parse_args()
@@ -235,9 +238,9 @@ def main():
         dependencies.append(model_package)
         if not args.quiet:
             print('Retrieving model structure and weights...')
-        model_url = retrieve_model(model_package)
+        model_url = retrieve_model(model_package, args.model_args)
         print('Creating extension skeleton...')
-        populate_extension(args.class_name, model_name, model_url, dependencies)
+        populate_extension(args.class_name, model_name, model_url, args.model_args, dependencies)
 
     if args.no_temp:
         run(os.path.join(os.getcwd(), 'workdir'))
