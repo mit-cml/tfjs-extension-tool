@@ -77,6 +77,7 @@ def retrieve_model(model_package):
                             stderr=sys.stderr if verbose else subprocess.DEVNULL)
     output = subprocess.check_output(['node', 'retrieve.js'], encoding='utf-8', universal_newlines=True,
                                      stderr=sys.stderr if verbose else subprocess.DEVNULL)
+    model_url = None
     for line in io.StringIO(output):
         if line.startswith('https://'):
             filename = line.strip().split('/')
@@ -88,6 +89,8 @@ def retrieve_model(model_package):
             with urllib.request.urlopen(line.strip()) as response:
                 with open(os.path.join('out', filename), 'wb') as out:
                     out.write(response.read())
+            model_url = line.strip().rsplit('/', 1)[0] + '/'
+    return model_url
 
 
 def get_package_and_class(class_name):
@@ -140,7 +143,7 @@ def copy_model_assets(package_dir):
     return result
 
 
-def copy_extension(package_dir, package_name, class_name, model, files):
+def copy_extension(package_dir, package_name, class_name, model, model_url, files):
     with open(os.path.join(TEMPLATE, 'TensorflowTemplate.java')) as template:
         with open(os.path.join(package_dir, f'{class_name}.java'), 'w') as out:
             for line in template:
@@ -152,7 +155,7 @@ def copy_extension(package_dir, package_name, class_name, model, files):
                     filelist = ', '.join(files + ['index.html', 'app.js'])
                     out.write(f'@UsesAssets(fileNames = "{filelist}")\n')
                 else:
-                    out.write(line.replace('TensorflowTemplate', class_name))
+                    out.write(line.replace('TensorflowTemplate', class_name).replace('%MODEL_URL%', model_url))
 
 
 def create_versions_file(package_dir, dependencies):
@@ -169,13 +172,13 @@ def create_versions_file(package_dir, dependencies):
             f.write(f'{dependency}={info["version"]}\n')
 
 
-def populate_extension(fqcn, model, dependencies):
+def populate_extension(fqcn, model, model_url, dependencies):
     package, class_name = get_package_and_class(fqcn)
     package_dir = os.path.join(*(['..', 'src'] + package.split('.')))
     os.makedirs(os.path.join(package_dir, 'assets'), exist_ok=True)
     files = copy_assets(class_name, model, dependencies, package_dir)
     files += copy_model_assets(package_dir)
-    copy_extension(package_dir, package, class_name, model, files)
+    copy_extension(package_dir, package, class_name, model, model_url, files)
     create_versions_file(package_dir, dependencies)
 
 
@@ -232,9 +235,9 @@ def main():
         dependencies.append(model_package)
         if not args.quiet:
             print('Retrieving model structure and weights...')
-        retrieve_model(model_package)
+        model_url = retrieve_model(model_package)
         print('Creating extension skeleton...')
-        populate_extension(args.class_name, model_name, dependencies)
+        populate_extension(args.class_name, model_name, model_url, dependencies)
 
     if args.no_temp:
         run(os.path.join(os.getcwd(), 'workdir'))
