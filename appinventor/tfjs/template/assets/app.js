@@ -16,8 +16,8 @@ const defaultMobileNetStride = 16;
 const defaultMobileNetInputResolution = 257;
 
 const ERRORS = {
-  ERROR_WEBVIEW_NO_MEDIA: "WebView does not support navigator.mediaDevices",
-  ERROR_MODEL_LOAD: "Unable to load model"
+  400: "WebView does not support navigator.mediaDevices",
+  401: "Unable to load model"
 };
 
 let forwardCamera = true;
