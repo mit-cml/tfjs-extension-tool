@@ -64,10 +64,7 @@ function runClassifier(video, net) {
   canvas.height = videoHeight;
 
   async function classifyFrame() {
-    const result = await net.evaluate(video, {
-      flipHorizontal: forwardCamera,
-      decodingMethod: 'single-person'
-    });
+    const result = await net.classify(video);
 
     ctx.clearRect(0, 0, videoWidth, videoHeight);
 
@@ -87,13 +84,7 @@ function runClassifier(video, net) {
 
 async function loadModel() {
   try {
-    return $MODEL.load({
-      architecture: 'MobileNetV1',
-      outputStride: defaultMobileNetStride,
-      inputResolution: defaultMobileNetInputResolution,
-      multiplier: defaultMobileNetMultiplier,
-      quantBytes: defaultQuantBytes
-    });
+    return $MODEL.load($MODEL_ARGS);
   } catch (e) {
     TensorflowTemplate.error(ERROR_MODEL_LOAD,
       ERRORS[ERROR_MODEL_LOAD]);
