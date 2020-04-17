@@ -14,7 +14,7 @@ import urllib.request
 
 
 __author__ = 'Evan W. Patton'
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 
 TEMPLATE = os.path.join(os.path.dirname(__file__), 'template')
