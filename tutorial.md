@@ -97,7 +97,7 @@ With the prerequsites installed, let's make our first extension.
 ### Generate Extension Skeleton from Template
 
 ```
-python -m appinventor.tfjs -A '{version:1,alpha:0.25}' mobilenet com.example.mobilenet.LookExtension
+appinventor-tfjs -A '{version:1,alpha:0.25}' mobilenet com.example.mobilenet.LookExtension
 ```
 
 This will create a new directory called LookExtension in your current directory. It will create a template LookExtension.java file for your App Inventor extension as well as retrieve all of the model data needed for MobileNet.
