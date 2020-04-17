@@ -13,6 +13,10 @@ import tempfile
 import urllib.request
 
 
+__author__ = 'Evan W. Patton'
+__version__ = '0.1.3'
+
+
 TEMPLATE = os.path.join(os.path.dirname(__file__), 'template')
 peer_re = re.compile(r' requires a peer of (?P<peer>[^ ]*) but none is installed')
 fetch_template = """
@@ -191,8 +195,9 @@ def main():
     #     print('This module should be run from within the appinventor directory in appinventor-sources.',
     #           file=sys.stderr)
     #     sys.exit(1)
-    parser = argparse.ArgumentParser(prog='appinventor.tfjs',
+    parser = argparse.ArgumentParser(prog='appinventor-tfjs',
                                      description='Create a TensorFlow.js-based extension for MIT App Inventor.')
+    parser.add_argument('--version', action='version', version='%(prog)s version (' + __version__ + ')')
     parser.add_argument('--no-temp', dest='no_temp', default=False, action='store_const', const=True)
     parser.add_argument('--overwrite', '-f', dest='overwrite', action='store_const', const=True, default=False)
     parser.add_argument('--verbose', '-v', action='store_const', const=True, default=False)

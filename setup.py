@@ -1,10 +1,11 @@
 from setuptools import setup, find_packages
+from appinventor.tfjs.__main__ import __version__
 
 with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='appinventor-tfjs',
-      version='0.1.3',
+      version=__version__,
       description='Tool for generating App Inventor extension skeletons from Tensorflow.js models',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -13,7 +14,7 @@ setup(name='appinventor-tfjs',
       author_email='ewpatton@mit.edu',
       license='Apache',
       packages=find_packages(),
-      entry_points={'console_scripts': ['appinventor.tfjs = appinventor.tfjs.__main__:main']},
+      entry_points={'console_scripts': ['appinventor-tfjs = appinventor.tfjs.__main__:main']},
       python_requires='>=3.0',
       classifiers=[
             'Development Status :: 3 - Alpha',
