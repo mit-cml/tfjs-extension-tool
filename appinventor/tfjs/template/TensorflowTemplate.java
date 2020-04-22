@@ -5,6 +5,8 @@
 
 package template;
 
+import static android.Manifest.permission.CAMERA;
+
 import android.Manifest;
 import android.Manifest.permission;
 import android.annotation.SuppressLint;
@@ -60,7 +62,7 @@ import org.json.JSONObject;
     nonVisible = true)
 @SimpleObject(external = true)
 @UsesAssets(fileNames = "%ASSETS%")
-@UsesPermissions({Manifest.permission.CAMERA})
+@UsesPermissions({CAMERA})
 public class TensorflowTemplate extends AndroidNonvisibleComponent
     implements OnResumeListener, OnPauseListener, OnStopListener, Deleteable {
   private static final String LOG_TAG = TensorflowTemplate.class.getSimpleName();
