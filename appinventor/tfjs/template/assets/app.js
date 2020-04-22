@@ -25,7 +25,7 @@ let running = false;
 
 async function setupCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    PosenetExtension.error(ERROR_WEBVIEW_NO_MEDIA,
+    TensorflowTemplate.error(ERROR_WEBVIEW_NO_MEDIA,
       ERRORS[ERROR_WEBVIEW_NO_MEDIA]);
     return;
   }
