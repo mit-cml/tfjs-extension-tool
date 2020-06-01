@@ -130,7 +130,7 @@ def copy_assets(class_name, model_name, model_args, dependencies, package_dir):
                     with open(os.path.join(dst_asset_dir, file), 'w') as dst:
                         for line in src:
                             if 'SCRIPTS' not in line:
-                                dst.write(line)
+                                dst.write(line.replace('TensorflowTemplate', class_name))
                             else:
                                 for asset in assets:
                                     if asset.endswith('.min.js'):
